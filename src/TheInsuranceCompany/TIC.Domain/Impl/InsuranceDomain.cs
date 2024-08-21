@@ -23,9 +23,22 @@ namespace TIC.DomainAPI.Impl
             _insuranceProvider.AddInsurance(insurance);
         }
 
-        public IEnumerable<TravelInsurance> GetDutchTravelInsurances()
+        public IEnumerable<TravelInsurance> GetDutchTravelInsurances(GetDutchTravelInsurancesRequest getDutchTravelInsuranceRequest)
         {
-            throw new NotImplementedException();
+            var travelInsurance = _insuranceProvider.GetInsurances().OfType<TravelInsurance>().Where(x => x.Coverage is not null && x.Coverage.Any(y => y.Code == "NL"))
+                .Select(t => new DomainModel.TravelInsurance
+                {
+                    Name = t.Name,
+                    Description = t.Description,
+                    InsurancePremium = t.InsurancePremium,
+                    InsuredAmount = t.InsuredAmount,
+                    Coverage = t.Coverage
+
+                });
+
+
+
+            return travelInsurance;
         }
     }
 }
